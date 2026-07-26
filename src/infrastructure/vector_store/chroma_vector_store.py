@@ -82,13 +82,14 @@ class InMemoryOrChromaVectorStore(VectorStoreInterface):
 
         # Búsqueda léxica/semántica de fallback en memoria
         import re
-        query_terms = set(w for w in re.findall(r"\w+", query.lower()) if len(w) >= 3)
+        stop_words = {"de", "del", "la", "el", "los", "las", "en", "es", "por", "para", "un", "una", "unos", "unas", "con", "sin", "al", "o", "y", "a", "que", "cual", "cuál"}
+        query_terms = set(w for w in re.findall(r"\w+", query.lower()) if len(w) >= 2 and w not in stop_words)
         scored_chunks = []
 
         for chunk in self._chunks_db:
             # Filtrado por metadatos si aplica
             if filter_metadata:
-                match = all(chunk.metadata.get(k) == v for k, v in filter_metadata.items())
+                match = all(chunk.metadata.get(k) == str(v) or chunk.metadata.get(k) == v for k, v in filter_metadata.items())
                 if not match:
                     continue
 
