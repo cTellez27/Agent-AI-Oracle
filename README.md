@@ -106,9 +106,9 @@ flowchart TD
 
 ## 📸 Evidencia del Despliegue en OCI
 
-Conforme a los requisitos del **Desafío Alura**, la aplicación se encuentra containerizada y ejecutándose en **Oracle Cloud Infrastructure (OCI)**:
+Conforme a los requisitos del **Desafío Alura**, la aplicación se encuentra containerizada y ejecutándose en vivo en **Oracle Cloud Infrastructure (OCI)**:
 
-> **URL de la Aplicación en OCI:** `http://<TU_IP_PUBLICA_OCI>:8501`
+> 🌐 **URL de la Aplicación en OCI (Activa):** [http://157.137.231.114:8501](http://157.137.231.114:8501)
 
 ![Demo en OCI Cloud](docs/assets/demo_oci.md)
 
@@ -118,7 +118,7 @@ Conforme a los requisitos del **Desafío Alura**, la aplicación se encuentra co
 
 ### 1. Clonar el Repositorio
 ```bash
-git clone https://github.com/tu-usuario/Agent-AI-Oracle.git
+git clone https://github.com/cTellez27/Agent-AI-Oracle.git
 cd Agent-AI-Oracle
 ```
 

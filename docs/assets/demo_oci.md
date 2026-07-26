@@ -7,10 +7,10 @@ El **Agente de IA Corporativo (Agent-AI-Oracle)** ha sido containerizado y despl
 ## 🌐 Detalles del Despliegue Activo en OCI
 
 - **Plataforma Cloud:** Oracle Cloud Infrastructure (OCI)
-- **Servicio:** OCI Compute Instance (Ubuntu 22.04 LTS / ARM Ampere)
+- **Servicio:** OCI Compute Instance (Ubuntu 22.04 LTS / AMD E5 Flex)
 - **Puerto Público:** `8501` (TCP)
-- **URL de Producción:** `http://<OCI_PUBLIC_IP>:8501`
-- **Modelo LLM RAG:** OCI Generative AI Service (`cohere.command-r-plus`)
+- **URL de Producción:** [http://157.137.231.114:8501](http://157.137.231.114:8501)
+- **Modelo LLM RAG:** OCI Generative AI Service (`cohere.command-r-plus`) / Local Fallback RAG Engine
 
 ---
 
