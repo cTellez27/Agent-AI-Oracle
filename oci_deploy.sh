@@ -41,8 +41,8 @@ fi
 
 # 5. Compilar e iniciar contenedor con Docker Compose
 echo "🐳 Compilando imagen e iniciando contenedor Docker..."
-docker-compose down || true
-docker-compose up --build -d
+sudo docker-compose down || sudo docker compose down || true
+sudo docker-compose up --build -d || sudo docker compose up --build -d
 
 echo "=============================================================================="
 echo "✅ ¡DESPLIEGUE EXITOSO EN ORACLE CLOUD INFRASTRUCTURE (OCI)!"
