@@ -81,7 +81,8 @@ class InMemoryOrChromaVectorStore(VectorStoreInterface):
                 pass  # Si falla la consulta a Chroma, usa el fallback en memoria
 
         # Búsqueda léxica/semántica de fallback en memoria
-        query_terms = set(query.lower().split())
+        import re
+        query_terms = set(w for w in re.findall(r"\w+", query.lower()) if len(w) >= 3)
         scored_chunks = []
 
         for chunk in self._chunks_db:
@@ -93,7 +94,8 @@ class InMemoryOrChromaVectorStore(VectorStoreInterface):
 
             content_lower = chunk.content.lower()
             score = sum(1 for term in query_terms if term in content_lower)
-            scored_chunks.append((score, chunk))
+            if score > 0:
+                scored_chunks.append((score, chunk))
 
         # Ordenar por score descendente
         scored_chunks.sort(key=lambda x: x[0], reverse=True)
