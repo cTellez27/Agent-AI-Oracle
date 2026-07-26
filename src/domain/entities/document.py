@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 from typing import Dict, Any, List, Optional
-from datetime import datetime
+from datetime import datetime, timezone
 
 
 @dataclass
@@ -10,7 +10,7 @@ class DocumentMetadata:
     file_type: str
     file_size_bytes: int
     category: str = "General"  # RH, Finanzas, Operaciones, Legal, etc.
-    upload_timestamp: datetime = field(default_factory=datetime.utcnow)
+    upload_timestamp: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
     additional_info: Dict[str, Any] = field(default_factory=dict)
 
 
