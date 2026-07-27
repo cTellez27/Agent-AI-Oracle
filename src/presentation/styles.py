@@ -131,6 +131,22 @@ def inject_custom_css():
         box-shadow: 0 6px 18px rgba(199, 70, 52, 0.45) !important;
     }
 
+    /* Personalización y traducción del stFileUploader al Español */
+    section[data-testid="stFileUploader"] button {
+        font-size: 0 !important;
+        padding: 8px 16px !important;
+    }
+    section[data-testid="stFileUploader"] button::after {
+        content: "📁 Seleccionar archivos" !important;
+        font-size: 13px !important;
+        font-weight: 600 !important;
+        color: #FFFFFF !important;
+    }
+    section[data-testid="stFileUploader"] small {
+        color: #94A3B8 !important;
+        font-size: 12px !important;
+    }
+
     /* Ocultar elementos predeterminados innecesarios de Streamlit */
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
