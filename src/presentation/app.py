@@ -12,19 +12,27 @@ if str(root_dir) not in sys.path:
 from src.infrastructure.vector_store.chroma_vector_store import InMemoryOrChromaVectorStore
 from src.application.use_cases.ingestion_use_case import IngestionUseCase
 from src.application.use_cases.query_rag_use_case import QueryRAGUseCase
-from src.presentation.ui_components import render_sidebar_info, render_source_chunks
+from src.presentation.styles import inject_custom_css
+from src.presentation.ui_components import (
+    render_brand_header,
+    render_sidebar_info,
+    render_source_chips
+)
 
 # Cargar variables de entorno
 load_dotenv()
 
 st.set_page_config(
-    page_title="Agent-AI-Oracle | Agente Conversacional Corporativo",
+    page_title="Agent-AI-Oracle | Asistente Corporativo",
     page_icon="🤖",
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
-# Inicializar servicios en el Session State de Streamlit para evitar recargas innecesarias
+# Inyectar CSS moderno y minimalista
+inject_custom_css()
+
+# Inicializar servicios en el Session State de Streamlit
 if "vector_store" not in st.session_state:
     st.session_state.vector_store = InMemoryOrChromaVectorStore(
         collection_name="corporate_knowledge_base",
@@ -44,41 +52,40 @@ if "messages" not in st.session_state:
     st.session_state.messages = [
         {
             "role": "assistant",
-            "content": "¡Hola! Soy tu **Agente de IA Corporativo**. He sido entrenado para responder preguntas sobre políticas de RH, finanzas, manuales de operaciones, contratos y más.\n\nCarga tus documentos en el panel de la izquierda y hazme cualquier pregunta.",
+            "content": "¡Hola! Soy tu **Agente de IA Corporativo**.\n\nPuedo responder tus dudas sobre políticas de Recursos Humanos, estados financieros, procedimientos operativos, contratos y más.\n\nCarga tus archivos en la columna izquierda para comenzar.",
             "sources": []
         }
     ]
 
 
 def main():
+    # Header de marca minimalista
+    render_brand_header()
+
+    # Panel lateral de controles
     selected_category = render_sidebar_info()
 
-    st.title("🤖 Agent-AI-Oracle: Base de Conocimiento Empresarial")
-    st.caption("Desafío Alura Agentes — Oracle Cloud Infrastructure (OCI)")
-
-    st.markdown("---")
-
-    col_left, col_right = st.columns([1, 2])
+    col_left, col_right = st.columns([1, 2], gap="large")
 
     # -------------------------------------------------------------
     # COLUMNA IZQUIERDA: Ingesta de Documentos
     # -------------------------------------------------------------
     with col_left:
-        st.subheader("📤 Ingesta de Documentos")
+        st.markdown("### 📤 Ingesta de Documentos")
 
         category_input = st.selectbox(
-            "Categoría del documento a cargar:",
+            "Categoría del archivo:",
             ["RH", "Finanzas", "Operaciones", "Estratégico", "Legal & Compliance", "Marketing", "Sistemas", "I+D", "Calidad", "Comunicación Interna"],
             index=0
         )
 
         uploaded_files = st.file_uploader(
-            "Selecciona archivos (PDF, DOCX, XLSX, PPTX, MD, CSV, JSON, HTML):",
+            "Arrastra o selecciona tus archivos:",
             type=["pdf", "docx", "xlsx", "xls", "pptx", "ppt", "md", "csv", "json", "html", "txt"],
             accept_multiple_files=True
         )
 
-        if st.button("🚀 Ingerir e Indexar Documentos", use_container_width=True):
+        if st.button("⚡ Indexar Documentos", use_container_width=True):
             if not uploaded_files:
                 st.warning("Por favor selecciona al menos un archivo para cargar.")
             else:
@@ -107,39 +114,39 @@ def main():
                     
                     progress_bar.progress((idx + 1) / len(uploaded_files))
 
-                st.success(f"¡{len(uploaded_files)} documento(s) indexado(s) exitosamente en la base vectorial!")
+                st.success(f"¡{len(uploaded_files)} archivo(s) procesados e indexados!")
 
         # Resumen de documentos indexados
         st.markdown("---")
-        st.subheader("📊 Documentos en Memoria")
+        st.markdown("### 📊 Documentos Activos en Memoria")
         if not st.session_state.indexed_files:
-            st.info("Aún no se han indexado documentos en esta sesión.")
+            st.caption("Aún no se han cargado documentos en esta sesión.")
         else:
             for item in st.session_state.indexed_files:
-                st.markdown(f"• **{item['file_name']}** (`{item['category']}`) — {item['chunks']} chunks")
+                st.markdown(f"• **{item['file_name']}** (`{item['category']}`) — `{item['chunks']} chunks`")
 
     # -------------------------------------------------------------
     # COLUMNA DERECHA: Chat Conversacional RAG
     # -------------------------------------------------------------
     with col_right:
-        st.subheader("💬 Consulta Conversacional al Agente")
+        st.markdown("### 💬 Asistente Conversacional")
 
-        # Historial de mensajes
+        # Historial de chat
         for msg in st.session_state.messages:
             with st.chat_message(msg["role"]):
                 st.markdown(msg["content"])
                 if msg.get("sources"):
-                    render_source_chunks(msg["sources"])
+                    render_source_chips(msg["sources"])
 
         # Input de usuario
-        if prompt := st.chat_input("Realiza una pregunta sobre la documentación corporativa..."):
+        if prompt := st.chat_input("Escribe tu consulta sobre la documentación corporativa..."):
             st.session_state.messages.append({"role": "user", "content": prompt, "sources": []})
             with st.chat_message("user"):
                 st.markdown(prompt)
 
-            # Ejecutar caso de uso RAG
+            # Respuesta del Agente RAG
             with st.chat_message("assistant"):
-                with st.spinner("Buscando en la base de conocimiento y sintetizando respuesta..."):
+                with st.spinner("Sintetizando respuesta con base en la documentación..."):
                     result = st.session_state.query_use_case.execute_query(
                         query=prompt,
                         top_k=4,
@@ -147,9 +154,9 @@ def main():
                     )
 
                     st.markdown(result.answer)
-                    render_source_chunks(result.source_chunks)
+                    render_source_chips(result.source_chunks)
 
-                    st.caption(f"⚡ *Tiempo de ejecución:* {result.execution_time_seconds}s")
+                    st.caption(f"⚡ *Tiempo de respuesta:* {result.execution_time_seconds}s")
 
                     st.session_state.messages.append({
                         "role": "assistant",
